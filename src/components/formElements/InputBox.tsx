@@ -1,4 +1,5 @@
 import { useId } from "react";
+import CurrencyCombobox from "./CurrencyCombobox";
 
 type InputBoxProps = {
     label: string;
@@ -24,7 +25,6 @@ const InputBox = ({
     className = "",
 }: InputBoxProps) => {
     const amountInputId = useId();
-    const currencySelectId = useId();
 
     return (
         <div className={`bg-white p-3 rounded-lg text-sm flex ${className}`}>
@@ -48,22 +48,13 @@ const InputBox = ({
                 />
             </div>
             <div className="w-1/2 flex flex-wrap justify-end text-right">
-                <label htmlFor={currencySelectId} className="text-black/40 mb-2 w-full">
-                    Currency Type
-                </label>
-                <select
-                    id={currencySelectId}
-                    className="rounded-lg px-1 py-1 bg-gray-100 cursor-pointer outline-none"
+                <p className="text-black/40 mb-2 w-full">Currency Type</p>
+                <CurrencyCombobox
+                    options={currencyOptions}
                     value={selectedCurrency}
-                    onChange={(e) => onCurrencyChange?.(e.target.value)}
+                    onChange={(v) => onCurrencyChange?.(v)}
                     disabled={currencyDisabled}
-                >
-                    {currencyOptions.map((currency) => (
-                        <option key={currency} value={currency}>
-                            {currency.toUpperCase()}
-                        </option>
-                    ))}
-                </select>
+                />
             </div>
         </div>
     );

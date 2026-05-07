@@ -1,6 +1,6 @@
-import React, {useId} from "react";
+import { useId } from "react";
 
-const InputBox: React.FC<{
+type InputBoxProps = {
     label: string;
     amount: number;
     onAmountChange: (value: number) => void;
@@ -10,23 +10,23 @@ const InputBox: React.FC<{
     onCurrencyChange?: (value: string) => void;
     currencyDisabled?: boolean;
     className?: string;
-}> = ({
+};
+
+const InputBox = ({
     label,
     amount,
     onAmountChange,
     amountDisabled = false,
-    currencyOptions = [],
-    selectedCurrency = 'usd',
+    currencyOptions,
+    selectedCurrency = "usd",
     onCurrencyChange,
     currencyDisabled = false,
-    className = '',
-}) => {
+    className = "",
+}: InputBoxProps) => {
     const amountInputId = useId();
     const currencySelectId = useId();
 
-  return (
-       
-
+    return (
         <div className={`bg-white p-3 rounded-lg text-sm flex ${className}`}>
             <div className="w-1/2">
                 <label htmlFor={amountInputId} className="text-black/40 mb-2 inline-block">
@@ -35,20 +35,27 @@ const InputBox: React.FC<{
                 <input
                     id={amountInputId}
                     type="number"
+                    inputMode="decimal"
+                    min={0}
                     className="outline-none w-full bg-transparent py-1.5"
                     placeholder="Enter amount"
-                    value={amount}
-                    onChange={(e) => onAmountChange && onAmountChange(Number(e.target.value))}
+                    value={Number.isFinite(amount) ? amount : 0}
+                    onChange={(e) => {
+                        const next = e.target.valueAsNumber;
+                        onAmountChange(Number.isFinite(next) ? next : 0);
+                    }}
                     disabled={amountDisabled}
                 />
             </div>
             <div className="w-1/2 flex flex-wrap justify-end text-right">
-                <p className="text-black/40 mb-2 w-full">Currency Type</p>
+                <label htmlFor={currencySelectId} className="text-black/40 mb-2 w-full">
+                    Currency Type
+                </label>
                 <select
                     id={currencySelectId}
-                    className="rounded-lg px-1 py-1 bg-gray-100 cursor-pointer outline-none" 
+                    className="rounded-lg px-1 py-1 bg-gray-100 cursor-pointer outline-none"
                     value={selectedCurrency}
-                    onChange={(e) => onCurrencyChange && onCurrencyChange(e.target.value)}
+                    onChange={(e) => onCurrencyChange?.(e.target.value)}
                     disabled={currencyDisabled}
                 >
                     {currencyOptions.map((currency) => (
@@ -59,7 +66,7 @@ const InputBox: React.FC<{
                 </select>
             </div>
         </div>
-    )
-}
+    );
+};
 
 export default InputBox;
